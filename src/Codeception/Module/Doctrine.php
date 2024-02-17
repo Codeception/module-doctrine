@@ -47,7 +47,7 @@ use function var_export;
  * modules:
  *     enabled:
  *         - Symfony # 'ZF2' or 'Symfony'
- *         - Doctrine2:
+ *         - Doctrine:
  *             depends: Symfony # Tells Doctrine to fetch the Entity Manager through Symfony
  *             cleanup: true # All doctrine queries will be wrapped in a transaction, which will be rolled back at the end of each test
  * ```
@@ -57,7 +57,7 @@ use function var_export;
  * ```yaml
  * modules:
  *     enabled:
- *         - Doctrine2:
+ *         - Doctrine:
  *             connection_callback: ['MyDb', 'createEntityManager'] # Call the static method `MyDb::createEntityManager()` to get the Entity Manager
  * ```
  *
@@ -65,14 +65,14 @@ use function var_export;
  * (this is controlled by the `cleanup` setting).
  * By doing this, tests will run much faster and will be isolated from each other.
  *
- * To use the Doctrine2 Module in acceptance tests, set up your `acceptance.suite.yml` like this:
+ * To use the Doctrine Module in acceptance tests, set up your `acceptance.suite.yml` like this:
  *
  * ```yaml
  * modules:
  *     enabled:
  *         - Symfony:
  *             part: SERVICES
- *         - Doctrine2:
+ *         - Doctrine:
  *             depends: Symfony
  * ```
  *
@@ -84,7 +84,7 @@ use function var_export;
  * ```yaml
  * modules:
  *     enabled:
- *         - Doctrine2:
+ *         - Doctrine:
  *             purge_mode: 1 # 1: DELETE (=default), 2: TRUNCATE
  * ```
  *
@@ -146,7 +146,7 @@ use function var_export;
  *
  * Note that key is ignored, because actual field name is part of criteria and/or expression.
  */
-class Doctrine2 extends CodeceptionModule implements DependsOnModule, DataMapper
+class Doctrine extends CodeceptionModule implements DependsOnModule, DataMapper
 {
     private ?DoctrineProvider $dependentModule = null;
 
@@ -165,14 +165,14 @@ Provide connection_callback function to establish database connection and get En
 
 modules:
     enabled:
-        - Doctrine2:
+        - Doctrine:
             connection_callback: [My\ConnectionClass, getEntityManager]
 
 Or set a dependent module, which can be either Symfony or ZF2 to get EM from service locator:
 
 modules:
     enabled:
-        - Doctrine2:
+        - Doctrine:
             depends: Symfony
 EOF;
 
@@ -503,7 +503,7 @@ EOF;
         } elseif (is_string($classNameOrInstance)) {
             $instance = $this->instantiateAndPopulateEntity($classNameOrInstance, $data, $instances);
         } else {
-            throw new InvalidArgumentException(sprintf('Doctrine2::haveInRepository expects a class name or instance as first argument, got "%s" instead', gettype($classNameOrInstance)));
+            throw new InvalidArgumentException(sprintf('Doctrine::haveInRepository expects a class name or instance as first argument, got "%s" instead', gettype($classNameOrInstance)));
         }
 
         // Flush all changes to database and then refresh all entities. We need this because

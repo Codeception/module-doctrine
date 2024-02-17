@@ -5,8 +5,8 @@ parameters:
     - tests
   excludePaths:
     analyse:
-        - tests/data/doctrine2_fixtures/TestFixture1.php
-        - tests/data/doctrine2_fixtures/TestFixture2.php
+        - tests/data/doctrine_fixtures/TestFixture1.php
+        - tests/data/doctrine_fixtures/TestFixture2.php
         - tests/_support/UnitTester.php
   checkMissingIterableValueType: false
   reportUnmatchedIgnoredErrors: true

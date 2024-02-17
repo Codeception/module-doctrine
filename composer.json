@@ -1,11 +1,11 @@
 {
-    "name": "codeception/module-doctrine2",
-    "description": "Doctrine2 module for Codeception",
+    "name": "codeception/module-doctrine",
+    "description": "Doctrine module for Codeception",
     "license": "MIT",
     "type": "library",
     "keywords": [
         "codeception",
-        "doctrine2"
+        "doctrine"
     ],
     "authors": [
         {

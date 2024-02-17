@@ -5,7 +5,7 @@ declare(strict_types=1);
 use Composer\InstalledVersions;
 use Codeception\Exception\ModuleException;
 use Codeception\Lib\ModuleContainer;
-use Codeception\Module\Doctrine2;
+use Codeception\Module\Doctrine;
 use Codeception\Stub;
 use Codeception\Test\Unit;
 use Doctrine\Common\Collections\Criteria;
@@ -28,11 +28,11 @@ use QuirkyFieldName\EmbeddableHost;
 use Symfony\Bridge\Doctrine\Types\UuidType;
 use Symfony\Component\Uid\Uuid;
 
-final class Doctrine2Test extends Unit
+final class DoctrineTest extends Unit
 {
     private ?EntityManager $em = null;
 
-    private ?Doctrine2 $module = null;
+    private ?Doctrine $module = null;
 
     protected static function _setUpBeforeClass()
     {
@@ -50,7 +50,7 @@ final class Doctrine2Test extends Unit
             $this->markTestSkipped('doctrine/orm is not installed');
         }
 
-        $dir = __DIR__ . "/../../../data/doctrine2_entities";
+        $dir = __DIR__ . "/../../../data/doctrine_entities";
 
         require_once $dir . "/CompositePrimaryKeyEntity.php";
         require_once $dir . "/PlainEntity.php";
@@ -108,7 +108,7 @@ final class Doctrine2Test extends Unit
         ]);
 
         $container = Stub::make(ModuleContainer::class);
-        $this->module = new Doctrine2($container, [
+        $this->module = new Doctrine($container, [
             'connection_callback' => fn(): EntityManager => $this->em,
         ]);
 
@@ -124,7 +124,7 @@ final class Doctrine2Test extends Unit
             $this->markTestSkipped('doctrine/data-fixtures is not installed');
         }
 
-        $dir = __DIR__ . "/../../../data/doctrine2_fixtures";
+        $dir = __DIR__ . "/../../../data/doctrine_fixtures";
 
         require_once $dir . "/TestFixture1.php";
         require_once $dir . "/TestFixture2.php";
@@ -201,7 +201,7 @@ final class Doctrine2Test extends Unit
     public function testQuirkyAssociationFieldNames()
     {
         // This test case demonstrates how quirky field names can interfere with parameter
-        // names generated within Doctrine2. Specifically, parameter name for entity's own field
+        // names generated within Doctrine. Specifically, parameter name for entity's own field
         // '_assoc_val' clashes with parameter name for field 'val' of relation 'assoc'.
 
         $this->module->dontSeeInRepository(AssociationHost::class, [

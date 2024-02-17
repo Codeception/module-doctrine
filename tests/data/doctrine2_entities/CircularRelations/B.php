@@ -10,6 +10,8 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Entity
  * @ORM\Table(name="circular_b")
  */
+#[ORM\Entity]
+#[ORM\Table(name: 'circular_b')]
 class B
 {
     /**
@@ -17,12 +19,16 @@ class B
      * @ORM\Column(type="integer")
      * @ORM\GeneratedValue
      */
+    #[ORM\Id]
+    #[ORM\Column(type: 'integer')]
+    #[ORM\GeneratedValue]
     private ?int $id = null;
 
     /**
      * @var ArrayCollection
      * @ORM\OneToMany(targetEntity="C", mappedBy="b")
      */
+    #[ORM\OneToMany(targetEntity: C::class, mappedBy: 'b')]
     private Collection $cs;
 
     public function __construct()

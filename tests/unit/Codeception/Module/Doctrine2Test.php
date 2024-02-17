@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use Composer\InstalledVersions;
 use Codeception\Exception\ModuleException;
 use Codeception\Lib\ModuleContainer;
 use Codeception\Module\Doctrine2;
@@ -11,11 +12,12 @@ use Doctrine\Common\Collections\Criteria;
 use Doctrine\Common\DataFixtures\Executor\ORMExecutor;
 use Doctrine\Common\DataFixtures\Loader;
 use Doctrine\Common\DataFixtures\Purger\ORMPurger;
+use Doctrine\DBAL\DriverManager;
 use Doctrine\DBAL\Types\Type;
 use Doctrine\ORM\EntityManager;
-use Doctrine\ORM\ORMException;
+use Doctrine\ORM\Exception\ORMException;
+use Doctrine\ORM\ORMSetup;
 use Doctrine\ORM\Tools\SchemaTool;
-use Doctrine\ORM\Tools\Setup;
 use MultilevelRelations\A;
 use MultilevelRelations\B;
 use MultilevelRelations\C;
@@ -23,8 +25,8 @@ use QuirkyFieldName\Association;
 use QuirkyFieldName\AssociationHost;
 use QuirkyFieldName\Embeddable;
 use QuirkyFieldName\EmbeddableHost;
-use Ramsey\Uuid\Doctrine\UuidType;
-use Ramsey\Uuid\UuidInterface;
+use Symfony\Bridge\Doctrine\Types\UuidType;
+use Symfony\Component\Uid\Uuid;
 
 final class Doctrine2Test extends Unit
 {
@@ -48,10 +50,6 @@ final class Doctrine2Test extends Unit
             $this->markTestSkipped('doctrine/orm is not installed');
         }
 
-        if (!class_exists(Doctrine\Common\Annotations\Annotation::class)) {
-            $this->markTestSkipped('doctrine/annotations is not installed');
-        }
-
         $dir = __DIR__ . "/../../../data/doctrine2_entities";
 
         require_once $dir . "/CompositePrimaryKeyEntity.php";
@@ -73,11 +71,20 @@ final class Doctrine2Test extends Unit
         require_once $dir . "/CircularRelations/C.php";
         require_once $dir . '/EntityWithUuid.php';
 
-
-        $this->em = EntityManager::create(
-            ['url' => 'sqlite:///:memory:'],
-            Setup::createAnnotationMetadataConfiguration([$dir], true, null, null, false)
-        );
+        $connection = DriverManager::getConnection(['driver' => 'sqlite3', 'memory' => true]);
+        
+        if (version_compare(InstalledVersions::getVersion('doctrine/orm'), '3', '>=')) {
+            $this->em = new EntityManager(
+                $connection,
+                ORMSetup::createAttributeMetadataConfiguration([$dir], true)
+            );
+        } else {
+            $this->em = new EntityManager(
+                $connection,
+                // @phpstan-ignore-next-line
+                ORMSetup::createAnnotationMetadataConfiguration([$dir], true)
+            );
+        }
 
         (new SchemaTool($this->em))->createSchema([
             $this->em->getClassMetadata(CompositePrimaryKeyEntity::class),
@@ -421,13 +428,13 @@ final class Doctrine2Test extends Unit
 
     /**
      * The purpose of this test is to verify that entites with object @id, that are
-     * not entites itself, e.g. Ramsey\Uuid\UuidInterface, don't break the debug message.
+     * not entites itself, e.g. Symfony\Component\Uid\Uuid, don't break the debug message.
      */
     public function testDebugEntityWithNonEntityButObjectId()
     {
         $pk = $this->module->haveInRepository(EntityWithUuid::class);
 
-        self::assertInstanceOf(UuidInterface::class, $pk);
+        self::assertInstanceOf(Uuid::class, $pk);
     }
 
     public function testRefresh()
@@ -441,7 +448,7 @@ final class Doctrine2Test extends Unit
         $this->assertSame($original, $this->module->grabEntityFromRepository(PlainEntity::class, ['id' => $id]));
 
         // Here comes external change:
-        $this->em->getConnection()->executeUpdate('UPDATE PlainEntity SET name = ? WHERE id = ?', ['b', $id]);
+        $this->em->getConnection()->executeStatement('UPDATE PlainEntity SET name = ? WHERE id = ?', ['b', $id]);
 
         // Our original entity still has old data:
         $this->assertSame('a', $original->getName());
@@ -471,7 +478,7 @@ final class Doctrine2Test extends Unit
         $b = new PlainEntity;
         $this->module->haveInRepository($b, ['name' => 'b']);
 
-        $this->em->getConnection()->executeUpdate('UPDATE PlainEntity SET name = ?', ['c']);
+        $this->em->getConnection()->executeStatement('UPDATE PlainEntity SET name = ?', ['c']);
 
         $this->assertSame('a', $a->getName());
         $this->assertSame('b', $b->getName());
@@ -568,6 +575,10 @@ final class Doctrine2Test extends Unit
 
     public function testHaveFakeRepository()
     {
+        if (version_compare(InstalledVersions::getVersion('doctrine/orm'), '3', '>=')) {
+            $this->markTestSkipped('haveFakeRepository() is not supported for doctrine/orm:3 or higher');
+        }
+
         $e1 = new PlainEntity();
         $e2 = new PlainEntity();
         $this->module->haveFakeRepository(PlainEntity::class, [

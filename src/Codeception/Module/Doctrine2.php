@@ -257,7 +257,7 @@ EOF;
             );
         }
 
-        $this->em->getConnection()->connect();
+        $this->em->getConnection()->getNativeConnection();
     }
 
     /**
@@ -401,7 +401,12 @@ EOF;
 
             $reflectedRepositoryFactory = new ReflectionClass($repositoryFactory);
 
-            if ($reflectedRepositoryFactory->hasProperty('repositoryList')) {
+            if ($repositoryFactoryProperty->isReadOnly()) {
+                $this->debugSection(
+                    'Warning',
+                    'Repository can\'t be mocked, the EntityManager\'s repositoryFactory is readonly'
+                );
+            } elseif ($reflectedRepositoryFactory->hasProperty('repositoryList')) {
                 $repositoryListProperty = $reflectedRepositoryFactory->getProperty('repositoryList');
                 $repositoryListProperty->setAccessible(true);
 
@@ -415,13 +420,13 @@ EOF;
             } else {
                 $this->debugSection(
                     'Warning',
-                    'Repository can\'t be mocked, the EventManager\'s repositoryFactory doesn\'t have "repositoryList" property'
+                    'Repository can\'t be mocked, the EntityManager\'s repositoryFactory doesn\'t have "repositoryList" property'
                 );
             }
         } else {
             $this->debugSection(
                 'Warning',
-                'Repository can\'t be mocked, the EventManager class doesn\'t have "repositoryFactory" or "repositories" property'
+                'Repository can\'t be mocked, the EntityManager class doesn\'t have "repositoryFactory" or "repositories" property'
             );
         }
     }

@@ -1,6 +1,6 @@
 # Codeception Module Doctrine
 
-A Doctrine 2 module for Codeception.
+A Doctrine module for Codeception.
 
 [![Actions Status](https://github.com/Codeception/module-doctrine/workflows/CI/badge.svg)](https://github.com/Codeception/module-doctrine/actions)
 [![Latest Stable Version](https://poser.pugx.org/codeception/module-doctrine/v/stable)](https://github.com/Codeception/module-doctrine/releases)
@@ -9,7 +9,7 @@ A Doctrine 2 module for Codeception.
 
 ## Requirements
 
-* `PHP 8.0` or higher.
+* `PHP 8.1` or higher.
 
 ## Installation
 

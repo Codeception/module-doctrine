@@ -192,7 +192,7 @@ EOF;
         return [DoctrineProvider::class => $this->dependencyMessage];
     }
 
-    public function _inject(DoctrineProvider $dependentModule = null): void
+    public function _inject(?DoctrineProvider $dependentModule = null): void
     {
         $this->dependentModule = $dependentModule;
     }

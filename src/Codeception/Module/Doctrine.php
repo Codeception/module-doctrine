@@ -262,7 +262,13 @@ EOF;
             );
         }
 
-        $this->em->getConnection()->getNativeConnection();
+        $connection = $this->em->getConnection();
+        if (method_exists($connection, 'getNativeConnection')) {
+            $connection->getNativeConnection();
+        } else {
+            // @phpstan-ignore-next-line
+            $connection->getWrappedConnection();
+        }
     }
 
     /**

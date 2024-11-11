@@ -71,7 +71,14 @@ final class DoctrineTest extends Unit
         require_once $dir . "/CircularRelations/C.php";
         require_once $dir . '/EntityWithUuid.php';
 
-        $connection = DriverManager::getConnection(['driver' => 'sqlite3', 'memory' => true]);
+        $sqliteDriver = 'sqlite3';
+        // The driver "sqlite3" is only available as-of doctrine/dbal:3.5
+        // Use "pdo_sqlite" for older versions
+        if (version_compare(InstalledVersions::getVersion('doctrine/dbal'), '3.5', '<')) {
+            $sqliteDriver = 'pdo_sqlite';
+        }
+
+        $connection = DriverManager::getConnection(['driver' => $sqliteDriver, 'memory' => true]);
         
         if (version_compare(InstalledVersions::getVersion('doctrine/orm'), '3', '>=')) {
             $this->em = new EntityManager(

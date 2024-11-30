@@ -669,8 +669,7 @@ EOF;
     }
 
     /**
-     * Loads fixtures. Fixture can be specified as a fully qualified class name,
-     * an instance, or an array of class names/instances.
+     * Loads fixtures. The fixture class can be specified as a fully qualified class name, an instance, or an array of class names/instances.
      *
      * ```php
      * <?php
@@ -679,8 +678,7 @@ EOF;
      * $I->loadFixtures(new AppFixtures);
      * ```
      *
-     * By default fixtures are loaded in 'append' mode. To replace all
-     * data in database, use `false` as second parameter:
+     * By default, the fixtures are loaded in 'append' mode. To replace all data in database, pass `false` as second parameter:
      *
      * ```php
      * <?php
@@ -688,6 +686,13 @@ EOF;
      * ```
      *
      * This method requires [`doctrine/data-fixtures`](https://github.com/doctrine/data-fixtures) to be installed.
+     *
+     * If your fixture class uses Symfony's Dependency Injection, this method will not work. In this case, you can load your fixtures like this
+     * (requires [Module Cli](https://codeception.com/docs/modules/Cli)):
+     *
+     * ```bash
+     * $I->runShellCommand('php bin/console doctrine:fixtures:load --no-interaction --env=test');
+     * ```
      *
      * @param class-string<FixtureInterface>|class-string<FixtureInterface>[]|list<FixtureInterface> $fixtures
      * @param bool $append

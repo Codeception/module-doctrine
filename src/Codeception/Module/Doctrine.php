@@ -687,12 +687,19 @@ EOF;
      *
      * This method requires [`doctrine/data-fixtures`](https://github.com/doctrine/data-fixtures) to be installed.
      *
-     * If your fixture class uses Symfony's Dependency Injection, this method will not work. In this case, you can load your fixtures like this
-     * (requires [Module Cli](https://codeception.com/docs/modules/Cli)):
-     *
-     * ```bash
-     * $I->runShellCommand('php bin/console doctrine:fixtures:load --no-interaction --env=test');
-     * ```
+     * If your fixture class uses Symfony's Dependency Injection (i.e. has constructor arguments), this method will not work. In this case, you have 3 options:
+     * * Recommended: Try to get rid of those dependencies, possibly by moving their work into the very test.
+     * * Manually pass the constructor arguments like this:
+     *     ```php
+     *     <?php
+     *     $someService = $I->grabService(SomeService::class);
+     *     $appFixtures = new AppFixtures($someService);
+     *     $appFixtures->load();
+     *     ```
+     * * Load your fixtures like this (requires [Module Cli](https://codeception.com/docs/modules/Cli)):
+     *     ```bash
+     *     $I->runShellCommand('php bin/console doctrine:fixtures:load --no-interaction --env=test');
+     *     ```
      *
      * @param class-string<FixtureInterface>|class-string<FixtureInterface>[]|list<FixtureInterface> $fixtures
      * @param bool $append

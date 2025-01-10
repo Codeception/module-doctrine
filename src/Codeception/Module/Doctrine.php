@@ -689,7 +689,7 @@ EOF;
      *
      * This method requires [`doctrine/data-fixtures`](https://github.com/doctrine/data-fixtures) to be installed.
      *
-     * @param class-string<FixtureInterface>|class-string<FixtureInterface>[]|list<FixtureInterface> $fixtures
+     * @param class-string<\Doctrine\Common\DataFixtures\FixtureInterface>|class-string<\Doctrine\Common\DataFixtures\FixtureInterface>[]|list<\Doctrine\Common\DataFixtures\FixtureInterface> $fixtures
      * @param bool $append
      * @throws ModuleException
      * @throws ModuleRequireException

@@ -669,7 +669,7 @@ EOF;
     }
 
     /**
-     * Loads fixtures. Fixture can be specified as a fully qualified class name,
+     * Loads fixtures. The fixture class can be specified as a fully qualified class name,
      * an instance, or an array of class names/instances.
      *
      * ```php
@@ -701,7 +701,7 @@ EOF;
             || !class_exists(ORMExecutor::class)) {
             throw new ModuleRequireException(
                 __CLASS__,
-                'Doctrine fixtures support in unavailable.\nPlease, install doctrine/data-fixtures.'
+                'Doctrine fixtures support is unavailable.\nPlease, install doctrine/data-fixtures.'
             );
         }
 

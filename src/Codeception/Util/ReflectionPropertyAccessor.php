@@ -25,7 +25,6 @@ class ReflectionPropertyAccessor
             $reflectedEntity = new ReflectionClass($class);
             if ($reflectedEntity->hasProperty($field)) {
                 $property = $reflectedEntity->getProperty($field);
-                $property->setAccessible(true);
                 return $property->getValue($obj);
             }
             $class = get_parent_class($class);
@@ -62,7 +61,6 @@ class ReflectionPropertyAccessor
 
         foreach ($reflectedEntity->getProperties() as $property) {
             if (isset($data[$property->name])) {
-                $property->setAccessible(true);
                 $property->setValue($obj, $data[$property->name]);
             }
         }

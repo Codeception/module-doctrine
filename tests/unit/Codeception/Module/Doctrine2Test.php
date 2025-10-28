@@ -81,17 +81,17 @@ final class DoctrineTest extends Unit
         $connection = DriverManager::getConnection(['driver' => $sqliteDriver, 'memory' => true]);
         
         if (version_compare(InstalledVersions::getVersion('doctrine/orm'), '3', '>=')) {
-            $this->em = new EntityManager(
-                $connection,
-                ORMSetup::createAttributeMetadataConfiguration([$dir], true)
-            );
+            $configuration = ORMSetup::createAttributeMetadataConfiguration([$dir], true);
         } else {
-            $this->em = new EntityManager(
-                $connection,
-                // @phpstan-ignore-next-line
-                ORMSetup::createAnnotationMetadataConfiguration([$dir], true)
-            );
+            // @phpstan-ignore-next-line
+            $configuration = ORMSetup::createAnnotationMetadataConfiguration([$dir], true);
         }
+
+        if (PHP_VERSION_ID >= 80400 && method_exists($configuration, 'enableNativeLazyObjects')) {
+            $configuration->enableNativeLazyObjects(true);
+        }
+
+        $this->em = new EntityManager($connection, $configuration);
 
         (new SchemaTool($this->em))->createSchema([
             $this->em->getClassMetadata(CompositePrimaryKeyEntity::class),

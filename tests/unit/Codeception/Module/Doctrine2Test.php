@@ -258,17 +258,17 @@ final class DoctrineTest extends Unit
     {
         $this->module->haveInRepository(PlainEntity::class, ['name' => 'Test 1']);
         $this->module->seeInRepository(PlainEntity::class, [
-            Criteria::create()->where(
+            Criteria::create(true)->where(
                 Criteria::expr()->eq('name', 'Test 1')
             ),
         ]);
         $this->module->seeInRepository(PlainEntity::class, [
-            Criteria::create()->where(
+            Criteria::create(true)->where(
                 Criteria::expr()->contains('name', 'est')
             ),
         ]);
         $this->module->seeInRepository(PlainEntity::class, [
-            Criteria::create()->where(
+            Criteria::create(true)->where(
                 Criteria::expr()->in('name', ['Test 1'])
             ),
         ]);
@@ -303,7 +303,7 @@ final class DoctrineTest extends Unit
                 'c',
             ],
             array_map($getName, $this->module->grabEntitiesFromRepository(PlainEntity::class, [
-                Criteria::create()->orderBy(['name' => 'asc']),
+                Criteria::create(true)->orderBy(['name' => 'asc']),
             ]))
         );
 
@@ -314,7 +314,7 @@ final class DoctrineTest extends Unit
                 'a',
             ],
             array_map($getName, $this->module->grabEntitiesFromRepository(PlainEntity::class, [
-                Criteria::create()->orderBy(['name' => 'desc']),
+                Criteria::create(true)->orderBy(['name' => 'desc']),
             ]))
         );
     }

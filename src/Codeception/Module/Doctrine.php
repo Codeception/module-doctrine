@@ -299,7 +299,6 @@ EOF;
         $reflectedEm = new ReflectionClass($em);
         if ($reflectedEm->hasProperty('repositories')) {
             $property = $reflectedEm->getProperty('repositories');
-            $property->setAccessible(true);
             $property->setValue($em, []);
         }
         $this->em->clear();
@@ -401,13 +400,11 @@ EOF;
             //Support doctrine versions before 2.4.0
 
             $property = $reflectedEm->getProperty('repositories');
-            $property->setAccessible(true);
             $property->setValue($em, array_merge($property->getValue($em), [$className => $mock]));
         } elseif ($reflectedEm->hasProperty('repositoryFactory')) {
             //For doctrine 2.4.0+ versions
 
             $repositoryFactoryProperty = $reflectedEm->getProperty('repositoryFactory');
-            $repositoryFactoryProperty->setAccessible(true);
             $repositoryFactory = $repositoryFactoryProperty->getValue($em);
 
             $reflectedRepositoryFactory = new ReflectionClass($repositoryFactory);
@@ -419,7 +416,6 @@ EOF;
                 );
             } elseif ($reflectedRepositoryFactory->hasProperty('repositoryList')) {
                 $repositoryListProperty = $reflectedRepositoryFactory->getProperty('repositoryList');
-                $repositoryListProperty->setAccessible(true);
 
                 $repositoryHash = $em->getClassMetadata($className)->getName() . spl_object_id($em);
                 $repositoryListProperty->setValue(

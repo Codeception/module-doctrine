@@ -8,7 +8,6 @@ parameters:
         - tests/data/doctrine_fixtures/TestFixture1.php
         - tests/data/doctrine_fixtures/TestFixture2.php
         - tests/_support/UnitTester.php
-  checkMissingIterableValueType: false
   reportUnmatchedIgnoredErrors: true
   ignoreErrors:
       - path: tests/
@@ -21,3 +20,4 @@ parameters:
         message: '#Method \S+ has no return type specified#'
       - path: tests/
         message: '#(?:Method|Property) .+ with generic (?:interface|class) \S+ does not specify its types#'
+      - identifier: missingType.iterableValue

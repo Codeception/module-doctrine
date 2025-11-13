@@ -25,8 +25,8 @@ use QuirkyFieldName\Association;
 use QuirkyFieldName\AssociationHost;
 use QuirkyFieldName\Embeddable;
 use QuirkyFieldName\EmbeddableHost;
-use Symfony\Bridge\Doctrine\Types\UuidType;
-use Symfony\Component\Uid\Uuid;
+use Symfony\Bridge\Doctrine\Types\UlidType;
+use Symfony\Component\Uid\Ulid;
 
 final class DoctrineTest extends Unit
 {
@@ -36,8 +36,8 @@ final class DoctrineTest extends Unit
 
     protected static function _setUpBeforeClass()
     {
-        if (!Type::hasType('uuid')) {
-            Type::addType('uuid', UuidType::class);
+        if (!Type::hasType('ulid')) {
+            Type::addType('ulid', UlidType::class);
         }
     }
 
@@ -69,7 +69,7 @@ final class DoctrineTest extends Unit
         require_once $dir . "/CircularRelations/A.php";
         require_once $dir . "/CircularRelations/B.php";
         require_once $dir . "/CircularRelations/C.php";
-        require_once $dir . '/EntityWithUuid.php';
+        require_once $dir . '/EntityWithUlid.php';
 
         $sqliteDriver = 'sqlite3';
         // The driver "sqlite3" is only available as-of doctrine/dbal:3.5
@@ -111,7 +111,7 @@ final class DoctrineTest extends Unit
             $this->em->getClassMetadata(\CircularRelations\A::class),
             $this->em->getClassMetadata(\CircularRelations\B::class),
             $this->em->getClassMetadata(\CircularRelations\C::class),
-            $this->em->getClassMetadata(EntityWithUuid::class),
+            $this->em->getClassMetadata(EntityWithUlid::class),
         ]);
 
         $container = Stub::make(ModuleContainer::class);
@@ -435,13 +435,13 @@ final class DoctrineTest extends Unit
 
     /**
      * The purpose of this test is to verify that entites with object @id, that are
-     * not entites itself, e.g. Symfony\Component\Uid\Uuid, don't break the debug message.
+     * not entites itself, e.g. Symfony\Component\Uid\Ulid, don't break the debug message.
      */
     public function testDebugEntityWithNonEntityButObjectId()
     {
-        $pk = $this->module->haveInRepository(EntityWithUuid::class);
+        $pk = $this->module->haveInRepository(EntityWithUlid::class);
 
-        self::assertInstanceOf(Uuid::class, $pk);
+        self::assertInstanceOf(Ulid::class, $pk);
     }
 
     public function testRefresh()

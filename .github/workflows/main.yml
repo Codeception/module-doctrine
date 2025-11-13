@@ -8,7 +8,7 @@ jobs:
 
     strategy:
       matrix:
-        php: [8.2, 8.3, 8.4]
+        php: [8.2, 8.3, 8.4, 8.5]
         composer_flags: [ '', '--prefer-lowest' ]
 
     steps:
@@ -21,6 +21,10 @@ jobs:
         php-version: ${{ matrix.php }}
         extensions: pdo, sqlite
         coverage: none
+        # this ini directive seems to be off by default in PHP 8.5
+        # see https://github.com/php/php-src/issues/20279
+        # enable it because codeception relies on it.
+        ini-values: register_argc_argv=1
 
     - name: Validate composer.json and composer.lock
       run: composer validate

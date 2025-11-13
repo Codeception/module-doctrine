@@ -111,6 +111,14 @@ use function var_export;
  * $greenFoo = $this->fooRepository->findOneBy(['color' => 'green']);
  * ```
  *
+ * To clear the entire database from within a test, use can use Doctrine's `ORMPurger` like this:
+ *
+ * ```php
+ * $entityManager = $I->grabService('doctrine.orm.entity_manager');
+ * $purger = new ORMPurger($entityManager);
+ * $purger->purge();
+ * ```
+ *
  * ## Public Properties
  *
  * * `em` - Entity Manager

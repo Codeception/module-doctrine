@@ -27,7 +27,7 @@
         "doctrine/annotations": "^2.0.1",
         "doctrine/data-fixtures": "^1.6",
         "doctrine/orm": "^2.14 || ^3.0",
-        "phpstan/phpstan": "^1.10.58",
+        "phpstan/phpstan": "^2.2",
         "symfony/cache": "^5.4.35 || ^6.4.3 || ^7.0",
         "symfony/doctrine-bridge": "^5.4.35 || ^6.4.3 || ^7.0",
         "symfony/uid": "^5.4.35 || ^6.4.3 || ^7.0"

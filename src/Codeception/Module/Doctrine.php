@@ -263,6 +263,7 @@ EOF;
         }
 
         $connection = $this->em->getConnection();
+        // @phpstan-ignore-next-line
         if (method_exists($connection, 'getNativeConnection')) {
             $connection->getNativeConnection();
         } else {
@@ -732,7 +733,7 @@ EOF;
 
                 try {
                     $fixtureInstance = new $fixture();
-                } catch (Exception $exception) { // @phpstan-ignore-line https://github.com/phpstan/phpstan/issues/6574
+                } catch (Exception $exception) {
                     throw new ModuleException(
                         __CLASS__,
                         sprintf(
@@ -991,6 +992,7 @@ EOF;
     {
         $data = $this->em->getClassMetadata($assoc);
         foreach ($params as $key => $val) {
+            // @phpstan-ignore-next-line
             if ($data->associationMappings !== null && array_key_exists($key, $data->associationMappings)) {
                 $map = $data->associationMappings[$key];
                 if (is_array($val)) {

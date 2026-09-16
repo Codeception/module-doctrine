@@ -24,8 +24,3 @@ parameters:
       - path: tests/
         identifier: property.unusedType
       - identifier: missingType.iterableValue
-      - path: tests/unit/Codeception/Module/Doctrine2Test.php
-        identifier: argument.type
-        message: '#Parameter \#1 \$orderings of method Doctrine\\Common\\Collections\\Criteria::orderBy\(\) expects#'
-        count: 2
-        reportUnmatched: false

@@ -999,7 +999,9 @@ EOF;
             } elseif ($val instanceof Criteria) {
                 $qb->addCriteria($val);
             } elseif ($val instanceof Expression) {
-                $qb->addCriteria(Criteria::create(true)->where($val));
+                // Doctrine Collections 2.x support
+                $criteria = defined(Criteria::class . '::ASC') ? Criteria::create(true) : Criteria::create();
+                $qb->addCriteria($criteria->where($val));
             } else {
                 $qb->andWhere(sprintf('%s.%s = ?%s', $alias, $key, $paramIndex));
                 $qb->setParameter($paramIndex, $val);

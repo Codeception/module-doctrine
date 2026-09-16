@@ -254,14 +254,6 @@ EOF;
         }
 
 
-        if (!($this->em instanceof EntityManagerInterface)) {
-            throw new ModuleConfigException(
-                __CLASS__,
-                "Connection object is not an instance of \\Doctrine\\ORM\\EntityManagerInterface.\n"
-                . "Use `connection_callback` or dependent framework modules to specify one"
-            );
-        }
-
         $connection = $this->em->getConnection();
         // @phpstan-ignore-next-line
         if (method_exists($connection, 'getNativeConnection')) {

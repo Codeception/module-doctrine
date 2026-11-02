@@ -72,7 +72,7 @@ class ReflectionPropertyAccessor
      */
     public function setProperties(?object $obj, array $data): void
     {
-        if (!$obj || !is_object($obj)) {
+        if (!is_object($obj)) {
             throw new InvalidArgumentException('Cannot set properties for "' . gettype($obj) . '", expecting object');
         }
         $class = get_class($obj);

@@ -254,15 +254,8 @@ EOF;
         }
 
 
-        if (!($this->em instanceof EntityManagerInterface)) {
-            throw new ModuleConfigException(
-                __CLASS__,
-                "Connection object is not an instance of \\Doctrine\\ORM\\EntityManagerInterface.\n"
-                . "Use `connection_callback` or dependent framework modules to specify one"
-            );
-        }
-
         $connection = $this->em->getConnection();
+        // @phpstan-ignore-next-line
         if (method_exists($connection, 'getNativeConnection')) {
             $connection->getNativeConnection();
         } else {
@@ -732,7 +725,7 @@ EOF;
 
                 try {
                     $fixtureInstance = new $fixture();
-                } catch (Exception $exception) { // @phpstan-ignore-line https://github.com/phpstan/phpstan/issues/6574
+                } catch (Exception $exception) {
                     throw new ModuleException(
                         __CLASS__,
                         sprintf(
@@ -991,6 +984,7 @@ EOF;
     {
         $data = $this->em->getClassMetadata($assoc);
         foreach ($params as $key => $val) {
+            // @phpstan-ignore-next-line
             if ($data->associationMappings !== null && array_key_exists($key, $data->associationMappings)) {
                 $map = $data->associationMappings[$key];
                 if (is_array($val)) {
@@ -1005,7 +999,9 @@ EOF;
             } elseif ($val instanceof Criteria) {
                 $qb->addCriteria($val);
             } elseif ($val instanceof Expression) {
-                $qb->addCriteria(Criteria::create(true)->where($val));
+                // Doctrine Collections 2.x support
+                $criteria = defined(Criteria::class . '::ASC') ? Criteria::create(true) : Criteria::create();
+                $qb->addCriteria($criteria->where($val));
             } else {
                 $qb->andWhere(sprintf('%s.%s = ?%s', $alias, $key, $paramIndex));
                 $qb->setParameter($paramIndex, $val);

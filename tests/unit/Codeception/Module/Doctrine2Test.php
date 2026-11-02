@@ -9,6 +9,7 @@ use Codeception\Module\Doctrine;
 use Codeception\Stub;
 use Codeception\Test\Unit;
 use Doctrine\Common\Collections\Criteria;
+use Doctrine\Common\Collections\Order;
 use Doctrine\Common\DataFixtures\Executor\ORMExecutor;
 use Doctrine\Common\DataFixtures\Loader;
 use Doctrine\Common\DataFixtures\Purger\ORMPurger;
@@ -71,14 +72,7 @@ final class DoctrineTest extends Unit
         require_once $dir . "/CircularRelations/C.php";
         require_once $dir . '/EntityWithUlid.php';
 
-        $sqliteDriver = 'sqlite3';
-        // The driver "sqlite3" is only available as-of doctrine/dbal:3.5
-        // Use "pdo_sqlite" for older versions
-        if (version_compare(InstalledVersions::getVersion('doctrine/dbal'), '3.5', '<')) {
-            $sqliteDriver = 'pdo_sqlite';
-        }
-
-        $connection = DriverManager::getConnection(['driver' => $sqliteDriver, 'memory' => true]);
+        $connection = DriverManager::getConnection(['driver' => 'pdo_sqlite', 'memory' => true]);
         
         if (version_compare(InstalledVersions::getVersion('doctrine/orm'), '3', '>=')) {
             $configuration = ORMSetup::createAttributeMetadataConfiguration([$dir], true);
@@ -258,17 +252,17 @@ final class DoctrineTest extends Unit
     {
         $this->module->haveInRepository(PlainEntity::class, ['name' => 'Test 1']);
         $this->module->seeInRepository(PlainEntity::class, [
-            Criteria::create(true)->where(
+            self::createCriteria()->where(
                 Criteria::expr()->eq('name', 'Test 1')
             ),
         ]);
         $this->module->seeInRepository(PlainEntity::class, [
-            Criteria::create(true)->where(
+            self::createCriteria()->where(
                 Criteria::expr()->contains('name', 'est')
             ),
         ]);
         $this->module->seeInRepository(PlainEntity::class, [
-            Criteria::create(true)->where(
+            self::createCriteria()->where(
                 Criteria::expr()->in('name', ['Test 1'])
             ),
         ]);
@@ -296,6 +290,18 @@ final class DoctrineTest extends Unit
 
         $getName = fn($entity) => $entity->getName();
 
+        $collectionsVersion = InstalledVersions::getVersion('doctrine/collections');
+        if (version_compare($collectionsVersion, '3.0', '<')) {
+            $ascending = 'asc';
+            $descending = 'desc';
+        } elseif (version_compare($collectionsVersion, '3.1', '<')) {
+            $ascending = Order::Ascending;
+            $descending = Order::Descending;
+        } else {
+            $ascending = \SortDirection::Ascending;
+            $descending = \SortDirection::Descending;
+        }
+        
         $this->assertSame(
             [
                 'a',
@@ -303,7 +309,7 @@ final class DoctrineTest extends Unit
                 'c',
             ],
             array_map($getName, $this->module->grabEntitiesFromRepository(PlainEntity::class, [
-                Criteria::create(true)->orderBy(['name' => 'asc']),
+                self::createCriteria()->orderBy(['name' => $ascending]),
             ]))
         );
 
@@ -314,7 +320,7 @@ final class DoctrineTest extends Unit
                 'a',
             ],
             array_map($getName, $this->module->grabEntitiesFromRepository(PlainEntity::class, [
-                Criteria::create(true)->orderBy(['name' => 'desc']),
+                self::createCriteria()->orderBy(['name' => $descending]),
             ]))
         );
     }
@@ -596,5 +602,11 @@ final class DoctrineTest extends Unit
         $this->assertCount(2, $entities);
         $this->assertContains($e1, $entities);
         $this->assertContains($e2, $entities);
+    }
+
+    private static function createCriteria(): Criteria
+    {
+        // Doctrine Collections 2.x support
+        return defined(Criteria::class . '::ASC') ? Criteria::create(true) : Criteria::create();
     }
 }

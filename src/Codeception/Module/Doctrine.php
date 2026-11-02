@@ -145,7 +145,7 @@ use function var_export;
  * ```php
  * $I->grabEntitiesFromRepository('User', [
  *     'status' => 'active',
- *     Criteria::create()->orderBy(['name' => SortDirection::Ascending]), // or `['name' => asc]`
+ *     Criteria::create()->orderBy(['name' => SortDirection::Ascending]), // or `['name' => 'asc']`
  * ]);
  * ```
  *
